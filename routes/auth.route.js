@@ -7,8 +7,8 @@ import { registerUser, loginUser, logoutUser } from '../controllers/auth.control
 
 const authRouter = Router();
 
-authRouter.post('/register', jsonRequestValid, validate(registerUserSchema), registerUser);
-authRouter.post('/login', jsonRequestValid, validate(loginUserSchema), loginUser);
-authRouter.post('/logout', authMiddleware, logoutUser);
+authRouter.post('/register', jsonRequestValid, validate(registerUserSchema), registerUser); //check
+authRouter.post('/login', jsonRequestValid, validate(loginUserSchema), loginUser); //check
+authRouter.post('/logout', authMiddleware, logoutUser); //check
 
 export default authRouter;

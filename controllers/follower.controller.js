@@ -6,14 +6,39 @@ import {
     removeFavoriteService,
     getFavoritesService,
     getFeedService,
-    createCommentService
+    createCommentService,
+    searchCreatorsService,
+    getPublicCreatorProfileService
 } from '../services/follower.service.js';
 
-import { getCreatorPageService } from '../services/creator.service.js';
-import { CreatorProfile } from '../models/index.js';
+
+
+
+
+async function searchCreators(req, res) {
+    const { q } = req.query;
+    try {
+        const creators = await searchCreatorsService(q || '');
+        return res.status(200).json(creators);
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({ error: 'Error interno, intente nuevamente' });
+    }
+}
+
+async function getPublicCreatorProfile(req, res) {
+    const { creatorId } = req.params;
+    try {
+        const creator = await getPublicCreatorProfileService(parseInt(creatorId));
+        if (!creator) return res.status(404).json({ error: 'Creador no encontrado' });
+        return res.status(200).json(creator);
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500).json({ error: 'Error interno, intente nuevamente' });
+    }
+}
 
 // ─── Donaciones ───────────────────────────────────────────────────────────────
-
 async function sendDonation(req, res) {
     const { userId } = req.user;
     const { creatorId } = req.params;
@@ -154,5 +179,7 @@ export {
     addFavorite,
     removeFavorite,
     getMyFavorites,
-    getFeed
+    getFeed,
+    searchCreators,
+    getPublicCreatorProfile
 };

@@ -4,7 +4,7 @@ import fs from 'fs';
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const dir = 'uploads/';
+        const dir = 'uploads/'; 
         if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
         cb(null, dir);
     },
@@ -23,6 +23,6 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-const upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } }); // 5MB max
+const upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } }); 
 
 export default upload;
