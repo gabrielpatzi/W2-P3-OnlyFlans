@@ -1,8 +1,55 @@
 import { Donation, Favorite, Post, Comment, User, CreatorProfile } from '../models/index.js';
 import { Op } from 'sequelize';
 
-// ─── Donaciones ───────────────────────────────────────────────────────────────
+//busqueda de creadores
 
+async function searchCreatorsService(query) {
+    try {
+        const where = { role: 'creador' };
+        if (query) {
+            where.name = { [Op.iLike]: `%${query}%` };
+        }
+
+        const creators = await User.findAll({
+            where,
+            attributes: ['userId', 'name'],
+            include: [
+                {
+                    model: CreatorProfile,
+                    as: 'creatorProfile',
+                    attributes: ['profilePhoto', 'bannerPhoto', 'bio', 'flanPrice']
+                }
+            ],
+            order:[['name', 'ASC']]
+        });
+
+        return creators;
+    } catch (error) {
+        throw error;
+    }
+}
+
+async function getPublicCreatorProfileService(creatorId) {
+    try {
+        const creator = await User.findOne({
+            where: { userId: creatorId, role: 'creador' },
+            attributes: ['userId', 'name'],
+            include: [
+                {
+                    model: CreatorProfile,
+                    as: 'creatorProfile',
+                    attributes: ['profilePhoto', 'bannerPhoto', 'bio', 'flanPrice']
+                },
+                { model: Goal, as: 'goals', attributes: ['goalId', 'title', 'description'] }
+            ]
+        });
+        return creator;
+    } catch (error) {
+        throw error;
+    }
+}
+
+// ─── Donaciones ───────────────────────────────────────────────────────────────
 async function sendDonationService(followerId, creatorId, flanCount, message, flanPrice) {
     try {
         const donation = await Donation.create({
@@ -177,5 +224,7 @@ export {
     removeFavoriteService,
     getFavoritesService,
     getFeedService,
-    createCommentService
+    createCommentService,
+    searchCreatorsService,
+    getPublicCreatorProfileService
 };

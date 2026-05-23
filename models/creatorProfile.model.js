@@ -23,7 +23,7 @@ const CreatorProfile = sequelize.define('creator_profiles', {
         type: DataTypes.STRING,
         allowNull: true
     },
-    bio: {
+    bio: { //para que el bio ? tengo entendido que la meta ya funciona como descripcion o bio del perfil
         type: DataTypes.TEXT,
         allowNull: true
     },

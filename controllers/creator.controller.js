@@ -9,8 +9,6 @@ import {
     getCreatorPageService,
     deletePostService,
     getIncomeReportService,
-    searchCreatorsService,
-    getPublicCreatorProfileService
 } from '../services/creator.service.js';
 
 // ─── Perfil ───────────────────────────────────────────────────────────────────
@@ -44,8 +42,11 @@ async function uploadProfilePhoto(req, res) {
     if (!req.file) return res.status(400).json({ error: 'No se recibio ninguna imagen' });
     try {
         const photoPath = req.file.path;
+        console.log(photoPath);
+
         await updateProfilePhotoService(userId, photoPath, 'profilePhoto');
         return res.status(200).json({ message: 'Foto de perfil actualizada !', path: photoPath });
+
     } catch (error) {
         console.error(error.message);
         return res.status(500).json({ error: 'Error interno, intente nuevamente' });
@@ -159,7 +160,7 @@ async function getIncomeReport(req, res) {
 
 // ─── Busqueda / perfil publico (usados por ambos roles) ──────────────────────
 
-async function searchCreators(req, res) {
+/*async function searchCreators(req, res) {
     const { q } = req.query;
     try {
         const creators = await searchCreatorsService(q || '');
@@ -168,9 +169,9 @@ async function searchCreators(req, res) {
         console.error(error.message);
         return res.status(500).json({ error: 'Error interno, intente nuevamente' });
     }
-}
+}*/
 
-async function getPublicCreatorProfile(req, res) {
+/*async function getPublicCreatorProfile(req, res) {
     const { creatorId } = req.params;
     try {
         const creator = await getPublicCreatorProfileService(parseInt(creatorId));
@@ -181,7 +182,7 @@ async function getPublicCreatorProfile(req, res) {
         return res.status(500).json({ error: 'Error interno, intente nuevamente' });
     }
 }
-
+*/
 export {
     getMyProfile,
     updateMyProfile,
@@ -194,6 +195,4 @@ export {
     getMyPage,
     deletePost,
     getIncomeReport,
-    searchCreators,
-    getPublicCreatorProfile
 };

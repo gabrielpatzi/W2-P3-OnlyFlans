@@ -18,13 +18,19 @@ import {
     addFavorite,
     removeFavorite,
     getMyFavorites,
-    getFeed
+    getFeed,
+    searchCreators,
+    getPublicCreatorProfile
 } from '../controllers/follower.controller.js';
 
 const followerRouter = Router();
 
 // Todas las rutas son solo para seguidores
 followerRouter.use(authMiddleware, requireRole('seguidor'));
+
+
+followerRouter.get('/search', searchCreators);
+followerRouter.get('/:creatorId/public', validateParams(creatorParamsSchema), getPublicCreatorProfile); 
 
 // Donaciones
 followerRouter.post('/creators/:creatorId/donate',
@@ -66,5 +72,7 @@ followerRouter.get('/feed', getFeed);
 
 // Historial de donaciones propias
 followerRouter.get('/donations/history', getDonationHistory);
+
+
 
 export default followerRouter;

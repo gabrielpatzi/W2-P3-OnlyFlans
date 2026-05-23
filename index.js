@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
+import cookieParser from 'cookie-parser';
 import { sequelize, connectDb } from './config/db.config.js';
 import './models/index.js'; // modelos con las relaciones establecidas
 
@@ -18,10 +18,12 @@ const app = express();
 
 app.use(cors({
     origin: 'http://localhost:5173', // Vite default port
+    credentials: true, // esto para permitir el paso de la cookie que viene desde otro dominio 
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+app.use(cookieParser()); //este middleware es para poder parsear la cookie que nos envie el cliente de vuelta
 app.use(express.json());
 
 // Servir archivos subidos (fotos de perfil, banners, imagenes de posts)
@@ -32,7 +34,7 @@ app.use('/auth', authRouter);
 app.use('/creators', creatorRouter);
 app.use('/followers', followerRouter);
 
-// Health check
+// Health check ... okey esto como pa que ?
 app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
 
 async function start() {

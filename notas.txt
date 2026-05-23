@@ -1,0 +1,61 @@
+cuando hagamos una peticion desde el cliente que involucre una devolucion de cookies 
+tenemos que setear 
+
+credentials: 'include' 
+para que el navegador si reciba la cookie enviada por el servidor y luego en la proxima request si las vuelva a enviar 
+
+sobre multer: 
+express tiene una debilidad y es que cuando se le envian archivos como fotos o imagenes no sabe como procesar los datos binarios de estos archivos 
+
+y multer llega a solventar esto como un middleware que se especializa en el manejo de datos tipo "multipart/form-data"
+
+cuando un formulario web envia un archivo no lo envia como texto plano, sino que los fragmenta en partes "multipart" y multer toma esos datos (binarios ?) que llegan al servidor
+extrae esos archivos y los guarda donde nosotros le digamos (disco o memoria) y nos lo entrega listos para usar 
+
+const storage = multer.diskStorage({ //definimos que guardaremos el archivo en el disco duro  cb = callback
+    destination: (req, file, cb) => { //request del usuario,file tiene info del archivo que esta llegando, cb es el callback(funcion anonima a ejecutar cuando terminemos de procesar)
+        const dir = 'uploads/'; // definimos el nombre de la carpeta en la que queremos meter los datos y cual es la ruta raiz ?
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        cb(null, dir); // primer parametro es para enviar un error, colocamos null porque si llegamos hasta aqui todo salio joya y el segundo
+        //parametro es la carpeta de destino elegida
+    },
+
+    node.js utiliza el CWD para crear la carpeta en donde guardaremos las imagenes entonces si definimos la carpeta asi 
+    uploads/
+
+    node.js con el cwd la llavera a la raiz del proyecto resultando en una direccion asi 
+    D:\1-2026\web2\practicos\W2-P3-onlyFlans\uploads\ 
+    osea toma la raiz del proyecto en el que estamos trabajando y se la champa al directorio que estamos creando con el modulo fs
+
+    en esta linea ->  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
+    mas alla de la raiz del proyecto es mejor pensar que la carpeta se creara en el nivel en donde nosotros ejecutamos el comando para arrancar el servidor
+    el recursive: true no asegura de que si tenemos una estructura de carpetas anhidadas upload/user/profile
+    se creen todas sin romper nada
+
+    ahora cuando usemos el objeto que construimos con multer
+    creatorRouter.post('/me/profile/photo', upload.single('profilePhoto'), creatorController.uploadProfilePhoto); 
+    el 'profilePhoto' es el nombre del campo del formData en donde estan los binarios del archivo que procesaremos y guardaremos
+
+    upload.single('profilePhoto') -> como lo usamos de middleware en el form-data que es el formato en que deberiamos enviar esto
+    buscamos el campo "avatar": bytes del archivo y se procesa todo lo que veniamos viendo ..
+
+    en la configuracion de multer despues de procesar el archivo enviado y darle nuevas propiedades (le cambiamos el nombre y le dimos una
+    direccion en la cual se guardara el archivo) multer pondra todo eso en una nueva property para nuestro objeto req
+    req.file y tendra esta estructura:
+
+    {
+  fieldname: 'avatar',                  // El nombre del campo que venía en el FormData
+  originalname: 'foto-vacaciones.png',   // ¡Multer no olvida el nombre original! Te lo deja aquí por si acaso
+  encoding: '7bit',
+  mimetype: 'image/png',                 // El tipo de archivo que validó tu fileFilter
+  
+  //  AQUÍ ESTÁ TU MAGIA CONFIGURADA 
+  destination: 'uploads/',               // La ruta de la carpeta que definiste y creaste con fs
+  filename: '1716390123456-482910482.png', // El nombre ultra único y aleatorio que tú calculaste
+  path: 'uploads/1716390123456-482910482.png', // La ruta completa final donde vive el archivo físicamente
+  size: 142058                           // El peso real en bytes (que pasó tu filtro de 5MB)
+}
+
+entonces lo que guardamos en la db es la direccion del archivo que se ira a la raiz del proyecto
+en la carpeta uploads y se serviran estaticamente por express

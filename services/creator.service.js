@@ -7,7 +7,7 @@ async function getCreatorProfileService(creatorId) {
     try {
         const profile = await CreatorProfile.findOne({
             where: { userId: creatorId },
-            include: [{ model: User, as: 'user', attributes: ['userId', 'name', 'email'] }]
+            include: [{ model: User, as: 'user', attributes: ['name', 'email'] }]
         });
         return profile;
     } catch (error) {
@@ -19,7 +19,8 @@ async function updateCreatorProfileService(userId, updateData) {
     try {
         const profile = await CreatorProfile.findOne({ where: { userId } });
         if (!profile) return null;
-        await profile.update(updateData);
+        const {bio} = updateData;
+        await profile.update({bio});
         return profile;
     } catch (error) {
         throw error;
@@ -140,7 +141,7 @@ async function getIncomeReportService(creatorId, startDate, endDate) {
 
 // ─── Busqueda de creadores (para seguidores) ──────────────────────────────────
 
-async function searchCreatorsService(query) {
+/*async function searchCreatorsService(query) {
     try {
         const where = { role: 'creador' };
         if (query) {
@@ -164,9 +165,9 @@ async function searchCreatorsService(query) {
         throw error;
     }
 }
-
+*/
 // Perfil publico de un creador (sin posts — para ver posts hay que haber donado)
-async function getPublicCreatorProfileService(creatorId) {
+/*async function getPublicCreatorProfileService(creatorId) {
     try {
         const creator = await User.findOne({
             where: { userId: creatorId, role: 'creador' },
@@ -184,7 +185,7 @@ async function getPublicCreatorProfileService(creatorId) {
     } catch (error) {
         throw error;
     }
-}
+}*/
 
 export {
     getCreatorProfileService,
@@ -197,6 +198,4 @@ export {
     getCreatorPageService,
     deletePostService,
     getIncomeReportService,
-    searchCreatorsService,
-    getPublicCreatorProfileService
 };
