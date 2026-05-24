@@ -8,12 +8,9 @@ import {
     getFeedService,
     createCommentService,
     searchCreatorsService,
-    getPublicCreatorProfileService
+    getPublicCreatorProfileService,
+    getCreatorPostService
 } from '../services/follower.service.js';
-
-
-
-
 
 async function searchCreators(req, res) {
     const { q } = req.query;
@@ -45,23 +42,11 @@ async function sendDonation(req, res) {
     const { flanCount, message } = req.body;
 
     try {
-        // Obtener precio actual del flan del perfil del creador
-        const creatorProfile = await CreatorProfile.findOne({ where: { userId: parseInt(creatorId) } });
-        if (!creatorProfile) {
-            return res.status(404).json({ error: 'Creador no encontrado' });
-        }
-
         if (userId === parseInt(creatorId)) {
             return res.status(400).json({ error: 'No puedes donarte a ti mismo' });
         }
 
-        const donation = await sendDonationService(
-            userId,
-            parseInt(creatorId),
-            flanCount,
-            message || null,
-            creatorProfile.flanPrice
-        );
+        const donation = await sendDonationService(userId, parseInt(creatorId), flanCount, message || null);
 
         return res.status(201).json({
             message: `Donacion de ${flanCount} flan(es) enviada con exito !`,
@@ -69,7 +54,8 @@ async function sendDonation(req, res) {
         });
     } catch (error) {
         console.error(error.message);
-        return res.status(500).json({ error: 'Error interno, intente nuevamente' });
+        const status = error.statusCode || 500;
+        return res.status(status).json({ error: error.message });
     }
 }
 
@@ -92,7 +78,7 @@ async function getCreatorPosts(req, res) {
     const { creatorId } = req.params;
     // El middleware verifyDonor ya verifico que el seguidor haya donado
     try {
-        const posts = await getCreatorPageService(parseInt(creatorId));
+        const posts = await getCreatorPostService(parseInt(creatorId));
         return res.status(200).json(posts);
     } catch (error) {
         console.error(error.message);
@@ -100,7 +86,7 @@ async function getCreatorPosts(req, res) {
     }
 }
 
-// ─── Comentarios ──────────────────────────────────────────────────────────────
+// ─── Comentarios ─────────────────────────────────────────────────────────────
 
 async function commentOnPost(req, res) {
     const { userId } = req.user;

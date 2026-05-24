@@ -49,15 +49,34 @@ async function getPublicCreatorProfileService(creatorId) {
     }
 }
 
+async function getCreatorPostService(creatorId){ 
+     try {
+        const posts = await Post.findAll({
+            where: { userId: creatorId },
+            order: [['created_at', 'DESC']]
+        });
+        return posts;
+    } catch (error) {
+        throw error;
+    }
+}
+
 // ─── Donaciones ───────────────────────────────────────────────────────────────
-async function sendDonationService(followerId, creatorId, flanCount, message, flanPrice) {
+async function sendDonationService(followerId, creatorId, flanCount, message) {
     try {
+        const creatorProfile = await CreatorProfile.findOne({ where: { userId: creatorId } });
+        if (!creatorProfile) {
+            const error = new Error('Creador no encontrado');
+            error.statusCode = 404;
+            throw error;
+        }
+
         const donation = await Donation.create({
             followerId,
             creatorId,
             flanCount,
             message,
-            flanPrice
+            flanPrice: creatorProfile.flanPrice
         });
         return donation;
     } catch (error) {
@@ -226,5 +245,6 @@ export {
     getFeedService,
     createCommentService,
     searchCreatorsService,
-    getPublicCreatorProfileService
+    getPublicCreatorProfileService,
+    getCreatorPostService
 };

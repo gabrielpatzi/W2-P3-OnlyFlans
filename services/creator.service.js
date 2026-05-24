@@ -139,54 +139,6 @@ async function getIncomeReportService(creatorId, startDate, endDate) {
     }
 }
 
-// ─── Busqueda de creadores (para seguidores) ──────────────────────────────────
-
-/*async function searchCreatorsService(query) {
-    try {
-        const where = { role: 'creador' };
-        if (query) {
-            where.name = { [Op.iLike]: `%${query}%` };
-        }
-
-        const creators = await User.findAll({
-            where,
-            attributes: ['userId', 'name'],
-            include: [
-                {
-                    model: CreatorProfile,
-                    as: 'creatorProfile',
-                    attributes: ['profilePhoto', 'bannerPhoto', 'bio', 'flanPrice']
-                }
-            ]
-        });
-
-        return creators;
-    } catch (error) {
-        throw error;
-    }
-}
-*/
-// Perfil publico de un creador (sin posts — para ver posts hay que haber donado)
-/*async function getPublicCreatorProfileService(creatorId) {
-    try {
-        const creator = await User.findOne({
-            where: { userId: creatorId, role: 'creador' },
-            attributes: ['userId', 'name'],
-            include: [
-                {
-                    model: CreatorProfile,
-                    as: 'creatorProfile',
-                    attributes: ['profilePhoto', 'bannerPhoto', 'bio', 'flanPrice']
-                },
-                { model: Goal, as: 'goals', attributes: ['goalId', 'title', 'description'] }
-            ]
-        });
-        return creator;
-    } catch (error) {
-        throw error;
-    }
-}*/
-
 export {
     getCreatorProfileService,
     updateCreatorProfileService,
