@@ -76,7 +76,7 @@ async function getDonationHistory(req, res) {
 
 async function getCreatorPosts(req, res) {
     const { creatorId } = req.params;
-    // El middleware verifyDonor ya verifico que el seguidor haya donado
+    
     try {
         const posts = await getCreatorPostService(parseInt(creatorId));
         return res.status(200).json(posts);

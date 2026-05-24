@@ -1,4 +1,4 @@
-import { Donation, Favorite, Post, Comment, User, CreatorProfile } from '../models/index.js';
+import { Donation, Favorite, Post, Comment, User, CreatorProfile , Goal} from '../models/index.js';
 import { Op } from 'sequelize';
 
 //busqueda de creadores
