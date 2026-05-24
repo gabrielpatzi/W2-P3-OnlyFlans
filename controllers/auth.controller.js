@@ -56,6 +56,9 @@ async function loginUser(req, res) { // de aqui se movio la forma de manejar la 
     }
 }
 
+function getMe(req, res){
+    return res.status(200).json({me: req.user});
+}
 
 function logoutUser(req, res) {
 
@@ -67,4 +70,4 @@ function logoutUser(req, res) {
    return res.status(200).json({message: 'Sesion cerrada correctamente'}); //mandamos la respuesta con la instruccion dada previamente
 }
 
-export { registerUser, loginUser, logoutUser };
+export { registerUser, loginUser, logoutUser, getMe };
