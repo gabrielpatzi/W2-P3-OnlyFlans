@@ -7,7 +7,7 @@ import jsonRequestValid from '../middlewares/jsonRequestValid.js';
 import verifyDonor from '../middlewares/verifyDonor.js';
 
 import { donationSchema, donationParamsSchema } from '../validators/donation.schema.js';
-import { commentSchema } from '../validators/post.schema.js';
+import { commentSchema,postParamsSchema } from '../validators/post.schema.js';
 import { creatorParamsSchema } from '../validators/creator.schema.js';
 
 import {
@@ -49,7 +49,7 @@ followerRouter.get('/creators/:creatorId/posts',
 
 // Comentar en un post (solo si ha donado al creador)
 followerRouter.post('/creators/:creatorId/posts/:postId/comments',
-    validateParams(creatorParamsSchema),
+    validateParams(postParamsSchema),
     verifyDonor,
     jsonRequestValid,
     validate(commentSchema),
